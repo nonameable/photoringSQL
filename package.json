@@ -1,0 +1,26 @@
+{
+  "name": "photoRing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "extract_attribs.js",
+  "dependencies": {
+    "express": "^4.12.3",
+    "flickrapi": "^0.6.0",
+    "mysql": "^2.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/john-guerra/photoRing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/john-guerra/photoRing/issues"
+  },
+  "homepage": "https://github.com/john-guerra/photoRing#readme"
+}

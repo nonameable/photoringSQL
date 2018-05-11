@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1000px" height="1000px" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>ring</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="ring" sketch:type="MSArtboardGroup" fill="#500095">
+            <path d="M500,950 C748.528137,950 950,748.528137 950,499.999999 C950,251.471863 748.528137,50 500,50 C251.471862,50 50,251.471863 50,499.999999 C50,748.528137 251.471862,950 500,950 L500,950 Z M500,924.197248 C734.277671,924.197248 924.197248,734.277671 924.197248,499.999999 C924.197248,265.722329 734.277671,75.8027523 500,75.8027523 C265.722329,75.8027523 75.8027523,265.722329 75.8027523,499.999999 C75.8027523,734.277671 265.722329,924.197248 500,924.197248 L500,924.197248 Z" id="Ring" sketch:type="MSShapeGroup"></path>
+            <path d="M402.624938,60.6038634 L439.128091,24.1007108 L559.576484,24.1007108 L597.375062,61.8992892 L402.624938,60.6038634 Z" id="Path" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

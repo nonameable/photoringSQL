@@ -1,0 +1,40 @@
+#treemapLeft,
+#treemapRight {
+	/*padding: 50px;*/
+	margin-bottom:10px;
+}
+
+
+div#vs {
+	/* vs: */
+	font-family: AmericanTypewriter-Bold;
+	font-size: 80px;
+	color: #000000;
+	line-height: 177px;
+	text-shadow: 0px 2px 4px rgba(0,0,0,0.50);
+	margin-top:300px;
+}
+body {
+	font-family: AmericanTypewriter-Bold;
+}
+
+.mybutton {
+    color: white;
+    border-radius: 4px;
+ 	font-size: 125%;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+div#textQuestion {
+	text-align: center;
+	font-size: 125%;
+}
+
+div#answers {
+	display:none;
+}
+
+
+div.feedback {
+	font-size: 125%;
+}

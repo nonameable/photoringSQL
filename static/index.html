@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="John Alexis Guerra Gómez">
+    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> -->
+    <title>Photo Navigation: MoMA Archive</title>
+    <link rel="stylesheet" href="css/pure-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/main.css" rel="stylesheet">
+
+
+  <body>
+      <div class="pure-g">
+      <div class="pure-u-10-24">
+        <h1>MoMA Artworks</h1>
+      </div>
+      <div class="pure-u-14-24">
+
+          <!-- <a id="searchButton" class="pure-button myButton">
+          <img src="img/search.png" alt="Search"/>
+          </a> -->
+        <a id="nextDimensionButton" class="pure-button myButton">
+          <img src="img/nextDimension.png" alt="Next dimension"/>
+        </a>
+        <a id="previousDimensionButton" class="pure-button myButton">
+          <img src="img/previousDimension.png" alt="Previous dimension"/>
+        </a>
+        <a id="previousSectionButton" class="pure-button myButton">
+          <img src="img/previousSection.png" alt="Previous section"/>
+        </a>
+        <a id="previousPhotoButton" class="pure-button myButton">
+          <img src="img/previousPhoto.png" alt="Previous photo"/>
+        </a>
+        <a id="nextPhotoButton" class="pure-button myButton">
+          <img src="img/nextPhoto.png" alt="Next photo"/>
+        </a>
+        <a id="nextSectionButton" class="pure-button myButton">
+          <img src="img/nextSection.png" alt="Next section"/>
+        </a>
+        <a id="zoomInButton" class="pure-button myButton">
+          <img src="img/zoomIn.png" alt="Zoom in"/>
+        </a>
+        <a id="zoomOutButton" class="pure-button myButton">
+          <img src="img/zoomOut.png" alt="Zoom out"/>
+        </a>
+      </div>
+    <div class="pure-g">
+      <div class="pure-u-6-24">
+        <p>Navigating by: <span id="dimension_name"></span> </p>
+        <select id="dimensionNameSelect" ></select>
+        <div id="leftPane">
+          
+        </div>
+      </div> <!-- class="pure-u-6-24 -->
+
+
+      <div class="pure-u-18-24">
+        <!-- <h1 id = "title" >Internet Archive</h1> -->
+
+        <!-- <div id="dimension_value"></div> -->
+
+        <div class="container" id="mainContainer"></div><!-- /.container -->
+        <!-- <input id="searchQuery" type="input"></input> -->
+      </div>
+      <span id="dimension_name"></span>
+      <div id="bottomPane"></div>
+    </div>
+  </body>
+  <script src="js/queue.v1.min.js"></script>
+  <script src="js/d3.v3.min.js" charset="utf-8"></script>
+  <script src="js/fisheye.js" charset="utf-8"></script>
+  <script src="js/jquery-1.10.2.min.js"></script>
+  <script src="js/hammer.min.js"></script>
+  <script src="js/flickr_utils.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/navigationList.js"></script>
+  <script src="js/main.js"></script>
+</html>

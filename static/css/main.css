@@ -1,0 +1,63 @@
+.photo {
+    position: absolute;
+}
+
+.container {
+  /*max-width: 800px;*/
+  /*height: 800px;*/
+  overflow: hidden;
+}
+
+svg {
+  background-color: #eee;
+}
+
+.dimensionLabel {
+  position: absolute;
+  /*z-index: -1;*/
+  font-size: 16px;
+  font-family: Century Gothic, sans-serif;
+  text-align: left;
+  cursor: pointer;
+  /*background-color: yellow;*/
+  fill: #500095;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+.dimValue {
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+  cursor: pointer;
+}
+
+
+.dimBar {
+  fill: #500095;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+#canvasDimensions {
+  position: absolute;
+  top : 0;
+  left : 0;
+}
+
+.myButton {
+  padding: 0;
+  background-color: transparent;
+  color: transparent;
+
+}
+
+.myButton img {
+  height: 50px;
+}
+
+#dimensionName {
+  font-weight: bold;
+  font-size: 35px;
+}
+
+html * {
+  font-family: Century Gothic, sans-serif;
+}
