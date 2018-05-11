@@ -432,8 +432,8 @@ app.get("/getRandomPhotos", function (req, res) {
 
 
     console.log("Starting web server");
-
-    var server = app.listen(config.port, function () {
+    var theport = process.env.PORT || config.port;
+    var server = app.listen(theport, function () {
 
       var host = server.address().address;
       var port = server.address().port;
