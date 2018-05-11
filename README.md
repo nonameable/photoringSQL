@@ -1,7 +1,10 @@
 # PhotoRing
 
+![GitHub Logo](/static/img/photoringLive.png)
 
-PhotoRing is a tool that allows someone visualize and traverse a big repository of images across all its dimensions without losing context. 
+You can see a live version of this app [here!](http://photoring.herokuapp.com)
+
+PhotoRing is a tool that allows someone visualize and traverse a big repository of images across *all its dimensions* without losing context. 
 
 Let’s define some of the terms in that definition:
 
