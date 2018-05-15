@@ -1,64 +1,12 @@
 /*jslint browser: true, devel: true, indent: 4, multistr: true */
 /* global d3, require */
-
-
 var config  = require('./config');
-
 var express = require('express');
 var mysql      = require('mysql');
-
 var app = express();
-
 
 // configure URL for AmazonRDS or Local mySQL database
 connectionURL= process.env.MYSQL_DATABASE_URL || config.mySQLURL;
-
-// var mysqlParams = {
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'simplePass',
-//   database : 'photoring2',
-// };
-
-function getMysqlConnection() {
-  var connection = mysql.createConnection(connectionURL);
-
-  connection.connect(function(err) {
-    // connected! (unless `err` is set)
-    if (err!==null)  {
-      console.error("Error connecting to mysql" );
-      console.error(err);
-      return;
-    }
-
-  });
-
-}
-
-function handle_database(req,res) {
-
-    pool.getConnection(function(err,connection){
-        if (err) {
-          connection.release();
-          res.json({"code" : 100, "status" : "Error in connection database"});
-          return;
-        }
-
-        console.log('connected as id ' + connection.threadId);
-
-        connection.query("select * from user",function(err,rows){
-            connection.release();
-            if(!err) {
-                res.json(rows);
-            }
-        });
-
-        connection.on('error', function(err) {
-              res.json({"code" : 100, "status" : "Error in connection database"});
-              return;
-        });
-  });
-}
 
 var obj;
 var LIMIT = 500;
@@ -118,18 +66,13 @@ function getDimensionCounts(dimension_name, callback) {
 
         callback(result);
     });
-
-
   return;
-
 }
-
 
 function returnNextPhotosFromDimensionID(res, dimension_id) {
   // console.log(dimension_id);
   console.log("returnPhotosFromDimensionID  "  +
      " dimension_id=" + dimension_id);
-
   connection.query('SELECT * from photoDimensionAllTags \
             where dimension_id > ? \
           order by dimension_id limit ' + LIMIT , [dimension_id],
@@ -157,7 +100,6 @@ function returnPreviousPhotosFromDimensionID(res, dimension_id) {
   // console.log(dimension_id);
   console.log("returnPreviousPhotosFromDimensionID  "  +
      " dimension_id=" + dimension_id);
-
   connection.query('SELECT * FROM (SELECT * from photoDimensionAllTags \
             where dimension_id < ? \
           order by dimension_id DESC limit ' + LIMIT  + ') as t \
@@ -186,7 +128,6 @@ function returnPhotosFromDimensionID(res, dimension_id) {
   // console.log(dimension_id);
   console.log("returnPhotosFromDimensionID  "  +
      " dimension_id=" + dimension_id);
-
   connection.query('(SELECT * from photoDimensionAllTags \
             where dimension_id >= ? \
           order by dimension_id ASC limit ' + LIMIT/2 + ' )\
@@ -219,19 +160,17 @@ function returnPhotosFromDimensionID(res, dimension_id) {
   });
 }
 
-
 function returnPhotosFromDimensionData(res, dimension_name, dimension_id) {
   // console.log(dimension_id);
   console.log("returnPhotosFromDimensionData  " + " dimension_name=" + dimension_name +
      " dimension_id=" + dimension_id);
-
   connection.query('(SELECT * from photoDimensionAllTags  \
   where dimension_name = ? and dimension_id >= ?  \
-order by dimension_id ASC limit ' + LIMIT/2 + ') \
-UNION  \
-(SELECT * from photoDimensionAllTags  \
-where dimension_name = ? and dimension_id < ? \
-order by dimension_id DESC limit ' + LIMIT/2 + ') \
+  order by dimension_id ASC limit ' + LIMIT/2 + ') \
+  UNION  \
+  (SELECT * from photoDimensionAllTags  \
+  where dimension_name = ? and dimension_id < ? \
+  order by dimension_id DESC limit ' + LIMIT/2 + ') \
   ORDER by dimension_id', [dimension_name, dimension_id, dimension_name, dimension_id], function(err, rows, fields) {
       var result = {};
     if (err) {
@@ -281,70 +220,58 @@ function returnPhotosFromDimensionValue(res, dimension_name, dimension_value) {
   });
 }
 
-
 function returnPhotosFromDimensionNameAndPhotoID(res, photo_id, dimension_name) { // photo_id es unico, entonces no veo porque...
-    console.log("returnPhotosFromDimensionNameAndPhotoID  " + " dimension_name=" + dimension_name +
-      " photo_id=" + photo_id);
-
-    connection.query("SELECT dimension_id from photoDimension \
-    where photo_id = ? and dimension_name = ?",
-    [photo_id, dimension_name], function(err, rows, fields) {
-      if (err) {
-        console.log("ERROR: returnPhotosFromDimensionNameAndPhotoID Error querying photo_id +  " + photo_id);
-        console.error(err);
-        res.end(JSON.stringify({error:"MYSQL_ERROR", exception:err}));
-        return;
-      } else if (rows.length<1) {
-        console.log("ERROR: returnPhotosFromDimensionNameAndPhotoID Couldn't find photo with photo_id +  " + photo_id);
-        console.log(err);
-        res.end(JSON.stringify({error:"NO_PHOTO"}));
-        return;
-      } else {
-        dimension_id = rows[0].dimension_id;
-      }
-
-
-      returnPhotosFromDimensionData(res, dimension_name, dimension_id);
+  console.log("returnPhotosFromDimensionNameAndPhotoID  " + " dimension_name=" + dimension_name +
+    " photo_id=" + photo_id);
+  connection.query("SELECT dimension_id from photoDimension \
+  where photo_id = ? and dimension_name = ?",
+  [photo_id, dimension_name], function(err, rows, fields) {
+    if (err) {
+      console.log("ERROR: returnPhotosFromDimensionNameAndPhotoID Error querying photo_id +  " + photo_id);
+      console.error(err);
+      res.end(JSON.stringify({error:"MYSQL_ERROR", exception:err}));
+      return;
+    } else if (rows.length<1) {
+      console.log("ERROR: returnPhotosFromDimensionNameAndPhotoID Couldn't find photo with photo_id +  " + photo_id);
+      console.log(err);
+      res.end(JSON.stringify({error:"NO_PHOTO"}));
+      return;
+    } else {
+      dimension_id = rows[0].dimension_id;
+    }
+    returnPhotosFromDimensionData(res, dimension_name, dimension_id);
   });
 }
 
 function returnPhotosFromDimensionNameValueAndPhotoID(res, photo_id, dimension_name, dimension_value) { // photo_id es unico, entonces no veo porque...
-    console.log("returnPhotosFromDimensionNameValueAndPhotoID  " + " dimension_name=" + dimension_name +
-          " photo_id=" + photo_id + " dimension_value=" + dimension_value);
-    connection.query("SELECT dimension_id from photoDimension \
-    where photo_id = ? and dimension_name = ? and dimension_value = ?",
-    [photo_id, dimension_name, dimension_value], function(err, rows, fields) {
-      if (err) {
-        console.log("ERROR: returnPhotosFromDimensionNameValueAndPhotoID Error querying photo_id +  " + photo_id);
-        console.error(err);
-        res.end(JSON.stringify({error:"MYSQL_ERROR", exception:err}));
-        return;
-      } else if (rows.length<1) {
-        console.log("ERROR: returnPhotosFromDimensionNameValueAndPhotoID Couldn't find photo with photo_id +  " + photo_id);
-        console.log(err);
-        res.end(JSON.stringify({error:"NO_PHOTO"}));
-        return;
-      } else {
-        dimension_id = rows[0].dimension_id;
-      }
-
-
-      returnPhotosFromDimensionData(res, dimension_name, dimension_id);
+  console.log("returnPhotosFromDimensionNameValueAndPhotoID  " + " dimension_name=" + dimension_name +
+        " photo_id=" + photo_id + " dimension_value=" + dimension_value);
+  connection.query("SELECT dimension_id from photoDimension \
+  where photo_id = ? and dimension_name = ? and dimension_value = ?",
+  [photo_id, dimension_name, dimension_value], function(err, rows, fields) {
+    if (err) {
+      console.log("ERROR: returnPhotosFromDimensionNameValueAndPhotoID Error querying photo_id +  " + photo_id);
+      console.error(err);
+      res.end(JSON.stringify({error:"MYSQL_ERROR", exception:err}));
+      return;
+    } else if (rows.length<1) {
+      console.log("ERROR: returnPhotosFromDimensionNameValueAndPhotoID Couldn't find photo with photo_id +  " + photo_id);
+      console.log(err);
+      res.end(JSON.stringify({error:"NO_PHOTO"}));
+      return;
+    } else {
+      dimension_id = rows[0].dimension_id;
+    }
+    returnPhotosFromDimensionData(res, dimension_name, dimension_id);
   });
 }
 
 
-
-
+// serves an html file that contains the application code
 app.use(express.static('static'));
-
 app.get('/', function (req, res) {
-  // res.setHeader('Content-Type', 'application/json');
-  console.log("index");
   res.sendFile(__dirname + '/static/index.html');
 });
-
-
 
 //Returns the neighborhood of the given parameters
 app.get("/getPhotos", function (req, res) {
@@ -379,27 +306,18 @@ app.get("/getPreviousPhotos", function (req, res) {
   var dimension_id = req.query.dimension_id || 0;
   console.log("getPreviousPhotos "  +  " dimension_id:" + dimension_id);
   var photo_id;
-
   returnPreviousPhotosFromDimensionID(res, dimension_id);
-
 }); //getNextPhotos
-
 
 //Get the photos after the given dimension_id
 app.get("/getNextPhotos", function (req, res) {
   var dimension_id = req.query.dimension_id || 0;
   console.log("getNextPhotos "  +  " dimension_id:" + dimension_id);
   var photo_id;
-
   returnNextPhotosFromDimensionID(res, dimension_id);
-
 }); //getNextPhotos
 
-
-
-
 app.get("/getRandomPhotos", function (req, res) {
-
     connection.query("SELECT min(dimension_id) as min, max(dimension_id) as max FROM photoDimensionAllTags",
      function(err, rows, fields) {
       var min_dimension_id, max_dimension_id, dimension_id;
@@ -413,36 +331,27 @@ app.get("/getRandomPhotos", function (req, res) {
       max_dimension_id = +rows[0].max;
       dimension_id = Math.floor(Math.random() * (max_dimension_id - min_dimension_id) + min_dimension_id);
       console.log("getRandomPhotos dimension id min=" + min_dimension_id + " max " + max_dimension_id + " returning photos for id = " + dimension_id);
-
       returnPhotosFromDimensionID(res, dimension_id);
     });//callback
-
 }); //getRandomPhotos
 
-
-  var connection = mysql.createConnection(connectionURL);
-
-  connection.connect(function(err) {
-    // connected! (unless `err` is set)
-    if (err!==null)  {
-      console.error("Error connecting to mysql" );
-      console.error(err);
-      return;
-    }
-
-
-    console.log("Starting web server");
-    var theport = process.env.PORT || config.port;
-    var server = app.listen(theport, function () {
-
-      var host = server.address().address;
-      var port = server.address().port;
-
-      console.log('Example app listening at http://%s:%s', host, port);
-
-    });
-
+var connection = mysql.createConnection(connectionURL);
+connection.connect(function(err) {
+  // connected! (unless `err` is set)
+  if (err!==null)  {
+    console.error("Error connecting to mysql" );
+    console.error(err);
+    return;
+  }
+  console.log("Starting web server");
+  var theport = process.env.PORT || config.port;
+  var server = app.listen(theport, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('Example app listening at http://%s:%s', host, port);
   });
+
+});
 
 
 

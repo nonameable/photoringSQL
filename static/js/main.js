@@ -1,6 +1,7 @@
 /*jslint browser: true, indent: 4, multistr: true */
 /* global d3: false, $: false, alert: false, TreeMap: false , FlickrUtils: true, console: true, utils: true*/
 
+/*Returns current window size */
 function getWindowSize() {
     var w = window,
     d = document,
@@ -17,48 +18,49 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
             <path d="M402.624938,60.6038634 L439.128091,24.1007108 L559.576484,24.1007108 L597.375062,61.8992892 L402.624938,60.6038634 Z" id="Path" sketch:type="MSShapeGroup"></path> \
         </g> \
     </g>';
-//<object originalPhotos="plot1.svg" width="500" height="320" type="image/svg+xml" />
-
 
 //Main
 (function () {
     "use strict";
 
+    //variable used to print data flow while debugging.
     var DEBUG = false;
+    var NUM_LABELS = 10; // this variable is not used apparently
 
-    var NUM_LABELS = 10;
-
+    // initial number of rows and cols displayed. Must be the same number otherwise spaces are created in the grid
     var NUM_COLS = 1;
     var NUM_ROWS = 1;
-
+    // max # of cols
     var MAX_PAGE_SIZE = 7;
 
-    var PAGE_GAP = 0;
+    // as the value is zero, it does not affect the rest of the code.
+    // Maybe it might be useful when the screen size is different (mobile, tablet)?
+    var PAGE_GAP = 0; 
 
     var showRing = false;
-
+    
+    // these variables is very important. They are used across the whole file.
     var currentPhotoI = 0;
     var originalPhotos =[];
     var data;
     var reloading = false;
+
+    // used for multiple user interactions
     var direction = "vertical";
 
+    // code to handle the zoom
     var zoom = d3.behavior.zoom()
         .scaleExtent([1,20])
         .on("zoom", zoomed);
     var drag = d3.behavior.drag()
         .on("dragstart", onDragStart)
         .on("dragend", onDragEnd);
-
-
     var xDragStart; // To keep track of dragging
 
-    // var dimensionTypes = ["camera", "autotag","tag", "month taken", "album"];
-    // var dimensionTypes = ["bookdecade", "booksubject", "bookauthor", "bookyear",  "tag", "autotag"];
+
+    // Important variables
     var dimensionTypes = ["autotag"];
     // var dimensions = ["bookdecade", "booksubject", "bookauthor", "bookyear",  "tag"];
-    // var dimensions = ["camera", "autotag","tag", "month taken", "album"];
-
     var ignoredDimensions = ["month created", "month taken", "month/year taken",
         "month/year created", "bookleafnumber", "booksponsor"];
     var dimensions;
@@ -67,38 +69,29 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
     //when the photo doesn't have the other dimensions
     var redraw = true; // Should we redraw after getting new originalPhotos?
 
-    var showDimensionValues = false;
 
+    // code that handles the ring and multiple interactions
     var htmlID = "#mainContainer";
     var htmlIDNavList = "#leftPane";
     var margin = {top: 0, right: 0, bottom: 0, left: 0};
     var totalW, totalH, w, h; //all set in updateScreenSize();
-
-
-
     var hammermc = new Hammer(document.getElementById("mainContainer"));
     hammermc.on('pinch', function(ev) {
         console.log(ev);
     });
-
     hammermc.on('rotatestart rotatemove', function (ev) {
         var initAngle, newAngle;
         var currentAngle = ringAngleScale(currentDimension.split(":")[0]);
-
         if(ev.type == 'rotatestart') {
             initAngle = currentAngle;
         }
-
         newAngle = initAngle + ev.rotation;
-
         dimensions.sort(function (a, b) {
             return Math.abs(ringAngleScale(a) - newAngle) < Math.abs(ringAngleScale(b) - newAngle);
         });
         currentDimension = ringAngleScale.reverse(newAngle);
         updateRing();
     });
-
-
     var svg = d3.select(htmlID)
         .append("svg");
     var svgNavList = d3.select(htmlIDNavList)
@@ -107,40 +100,34 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         .attr("id", "photosLayer")
         .call(zoom)
         .call(drag);
-
     svg.append("defs")
         .append("g")
         .attr("id", "ring")
         .html(photoRing);
-
     var ringLayer = svg.append("g")
         .attr("id", "ringLayer")
         .attr("opacity", 0.5);
-
     ringLayer.append("use")
         .attr("id", "ringInstance")
         .attr('xlink:href', "#ring")
-        .attr("transform", "translate(" + ringX()  +
+        .attr("transform", "translate(" + ringX() +
                 "," +  ringY() +
                 ") scale(" + ringSize() + ") ");
 
 
-    var dimName = d3.select("#dimensionName");
+
+    var dimName = d3.select("#dimension_name");
 
     updateScreenSize();
 
     var ringNeedsUpdate = false;
-
     var ringAngleScale = d3.scale.ordinal().rangePoints([0, 330]);
-
     // var photowidth =  (w * 0.8) / NUM_COLS;
     var photowidth =  (h * 0.8) / NUM_ROWS;
     var xScale = d3.scale.linear();
     var pageScale = d3.scale.linear().domain([0,4]);
     var yScale = d3.scale.linear();
-
     var colScale = d3.scale.category20();
-
     var navMargin = {top: 0,
         right: 0, bottom: 0, left: 25};
     var navList = navigationList(svgNavList)
@@ -154,41 +141,18 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         // .margin({top: (h + margin.top + margin.bottom -10), right: 0, bottom: 0, left: 25})
         .onClick(jumpToDimensionValue);
 
-
-
-
     function updateScreenSize () {
         var wSize = getWindowSize();
         totalW = wSize.width / 24 * 18;
         totalH = wSize.height - 80; //Give some space for the icons
-
         margin = direction === "vertical" ?
             {top: 0, right: 0, bottom: 0, left: 0} :
             {top: 0, right: 0, bottom: 200, left: 0};
-
         w = totalW - margin.left - margin.right;
-        h = totalH - margin.top - margin.bottom ;
-
-
-
+        h = totalH - margin.top - margin.bottom;
         svg.style("width", totalW - 1 + "px")
             .style("height", (h + margin.top + margin.bottom - 5) + "px");
-
         photosLayer.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-        // updateRing();
-
-        // updateWithCurrentPhoto();
-
-        // dimName.style("left", 20 + "px" )
-        //         .style("top", (margin.top + document.getElementById("mainContainer").offsetTop) + "px");
-                // .style("top", ((direction === "vertical") ?
-                //     (margin.top + document.getElementById("mainContainer").offsetTop) :
-                //     ((h + margin.top + margin.bottom) - 70))+ "px");
-                //horizontal
-                // .style("top", (h + margin.top + margin.bottom) - 70 + "px");
-
         console.log("Update Screen size totalW " + totalW + " totalH " + totalH);
     }
 
@@ -198,7 +162,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
     });
 
     setupButtons();
-
 
     function setupButtons() {
         d3.select("#previousDimensionButton").on("click", previousDimension);
@@ -210,7 +173,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         d3.select("#zoomOutButton").on("click", zoomOut);
         d3.select("#zoomInButton").on("click", zoomIn);
         // d3.select("#searchButton").on("click", previousDimension);
-
     }
 
     //Returns true if there is an error
@@ -220,7 +182,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
                 //This photo doesn't have that dimension, try again
                 console.log("Dimension wasn't found, trying next one");
                 reloading = false;
-
                 //Have we exhausted our options?
                 if (Math.abs(changingDimensionCount) >= (dimensions.length - 1) ) {
                     changingDimensionCount = 0;
@@ -243,7 +204,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
                 }
                 return true;
             }
-
         }
 
         if (mdata.photos.length === 0) {
@@ -286,11 +246,8 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
     	// originalPhotos.forEach(function (d) {
     	// 	d.farm = (+d.server.slice(0,1) + 1) % 10;
     	// });
-
         updateWithCurrentPhoto();
-
         setInputEvents();
-
         reloading = false;
     };
 
@@ -298,7 +255,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         if (checkForErrorsInResponse(error, mdata)) {
             return;
         }
-
         data = mdata;
 
         if (redraw) {
@@ -307,18 +263,17 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
             originalPhotos = mdata.photos.concat(originalPhotos);
             currentPhotoI += mdata.photos.length; //move the currentPhotoI
         }
-
         console.log(" callbackPhotosLeft originalPhotos.length " + originalPhotos.length);
 
         // originalPhotos.forEach(function (d) {
         //     d.farm = (+d.server.slice(0,1) + 1) % 10;
         // });
-
         updateWithCurrentPhoto();
 
         reloading = false;
     };
 
+    // sets up functionality for keyboard keys
     var setInputEvents = function () {
 
         d3.select("body").on("keydown", function (e) {
@@ -357,15 +312,9 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
                 updateScreenSize();
                 updateWithCurrentPhoto();
             }
-
-
         });
-
         d3.select("#searchQuery").on("change", search);
     };
-
-
-
 
     function ringX() {
         return (margin.left + w / 2 - Math.min(w,h) / 2 / NUM_COLS);
@@ -418,10 +367,8 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
     var xPhoto = function (d,i) {
         var page = Math.floor(i/(NUM_ROWS*NUM_COLS)); //Page number
         var pageI = i  % (NUM_ROWS*NUM_COLS); // Page position
-
         return xScale(pageI % NUM_COLS) +
             (direction === "horizontal" ? pageScale(page) :  0);
-
         //horizontal
         //return xScale(pageI % NUM_ROWS) + pageScale(page);
     };
@@ -512,7 +459,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         // console.log(currentDimension);
         // console.log("---------&&&&&&&&&------------");
 
-
         // t creo que nunca entra aqui
         if (dimensions.indexOf(currentDimension)===-1) {
             console.log("weird code reached due to base64 enconding");
@@ -533,7 +479,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
             }
 
         }
-
         var dimensionNames = d3.set(dimensions.map(function (d) {
                     return d.split(":")[0];
                 })).values();
@@ -543,7 +488,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         dimSel.enter().append("option");
         dimSel.text(function (d) { return d; });
         dimSel.exit().remove();
-
         dimName.text(originalPhotos[currentPhotoI].dimension_name);
     }
 
@@ -680,12 +624,9 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         } else {
              selPhotos.selectAll("text").remove();
         }
-
         selPhotos.exit().remove();
-
         if (data.dimension_values) {
             // updateDimensions(data.dimension_values);
-
             navList
                 .direction(direction)
                 .width(document.getElementById(htmlIDNavList.slice(1)).offsetWidth)
@@ -705,7 +646,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         var nextDimensionIndex =  (dimensions.indexOf(currentDimension) - 1 + dimensions.length) % dimensions.length;
         changingDimensionCount-=1;
         currentDimension = dimensions[nextDimensionIndex];
-
         var currentPhotoID=originalPhotos[currentPhotoI].photo_id;
         console.log("previousDimension currentPhotoI = " + currentPhotoI + " changingDimensionCount" + changingDimensionCount);
         ringNeedsUpdate = true;
@@ -720,7 +660,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         console.log("%%%%%%%%%%%%%%%%%%%%% current dimension %%%%%%%%%%%%%%%%%%%");
         console.log(currentDimension);
         console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
         var nextDimensionIndex =  (dimensions.indexOf(currentDimension) + 1) % dimensions.length;
         changingDimensionCount+=1;
         currentDimension = dimensions[nextDimensionIndex];
@@ -900,7 +839,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         // console.log("reloadWithDimensionId dimension_id=" + dimension_id );
         var url = "getNextPhotos?dimension=" + getCurrentDimensionName();
         redraw = mRedraw !== undefined ? mRedraw: true;
-
         url +="&dimension_id=" + dimension_id;
         console.log("reloadWithDimensionId Right dimension_id=" + dimension_id  + " url=" + url);
         d3.json(url, callbackPhotos);
@@ -911,16 +849,13 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         reloading = true;
         var url = "getPreviousPhotos";
         redraw = mRedraw !== undefined ? mRedraw: true;
-
         url +="?dimension_id=" + dimension_id;
         console.log("reloadWithDimensionIdLeft dimension_id=" + dimension_id  + " url=" + url);
         d3.json(url, callbackPhotosLeft);
     }
 
-
     function zoomIn() {
         if (reloading) return;
-
         if (NUM_COLS< MAX_PAGE_SIZE && NUM_ROWS<MAX_PAGE_SIZE) {
             reloading = true;
             NUM_ROWS += 2;
@@ -953,7 +888,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         } else {
             console.log("Zoomed out of range " + zoom.scale());
         }
-
     }
 
     function onDragStart() {
@@ -983,7 +917,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         reloadWithDimensionIdRight(ID, redraw);
     }
 
-
     function getMorePhotosLeft(redraw, ID) {
         redraw = redraw === undefined ? false: redraw;
         ID = ID === undefined ? originalPhotos[0].dimension_id: ID;
@@ -992,28 +925,5 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
     }
 
     ringNeedsUpdate = true;
-    reloadRandom(); // initial
-
-
-    // function drawCanvas() {
-
-    //   // clear canvas
-    //   context.fillStyle = "#fff";
-    //   context.rect(0, 0,
-    //     locationBarLayer.attr("width"),
-    //     locationBarLayer.attr("height"));
-    //   context.fill();
-
-    //   var elements = dataContainer.selectAll("custom.rect");
-    //   elements.each(function(d) {
-    //     var node = d3.select(this);
-
-    //     context.beginPath();
-    //     context.fillStyle = node.attr("fillStyle");
-    //     context.rect(node.attr("x"), node.attr("y"), node.attr("width"), node.attr("height"));
-    //     context.fill();
-    //     context.closePath();
-
-    //     });
-    // }
+    reloadRandom(); // initial call when the user loads the page
 }()); //main
