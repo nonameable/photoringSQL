@@ -35,10 +35,10 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
 
     // as the value is zero, it does not affect the rest of the code.
     // Maybe it might be useful when the screen size is different (mobile, tablet)?
-    var PAGE_GAP = 0; 
+    var PAGE_GAP = 0;
 
     var showRing = false;
-    
+
     // these variables is very important. They are used across the whole file.
     var currentPhotoI = 0;
     var originalPhotos =[];
@@ -215,37 +215,29 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         return false;
     };
 
+    /* simple callbacks that assigns the result data to currentPhotoI, data, originalPhotos*/
+    /* it calls updateWithCurrentPhoto() and setInputEvents()*/
     var callbackPhotos = function (error, mdata) {
         if (checkForErrorsInResponse(error, mdata)) {
             console.log("error in response inside callbackPhotos")
             return;
         }
-
         if (redraw) {
             currentPhotoI = mdata.center;
             console.log("currentPhotoI: " + currentPhotoI);
         }
-
         data = mdata;
         //If we make it this far, we were able to
         changingDimensionCount = 0;
-
-
         if (redraw) {
             originalPhotos = mdata.photos;
         } else {
             originalPhotos = originalPhotos.concat(mdata.photos);
         }
-
         console.log("---------------- MDATA --------------------");
         console.log(mdata);
         console.log("------------------------------------");
-
         console.log(" callbackPhotos originalPhotos.length " + originalPhotos.length);
-
-    	// originalPhotos.forEach(function (d) {
-    	// 	d.farm = (+d.server.slice(0,1) + 1) % 10;
-    	// });
         updateWithCurrentPhoto();
         setInputEvents();
         reloading = false;
@@ -264,10 +256,6 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
             currentPhotoI += mdata.photos.length; //move the currentPhotoI
         }
         console.log(" callbackPhotosLeft originalPhotos.length " + originalPhotos.length);
-
-        // originalPhotos.forEach(function (d) {
-        //     d.farm = (+d.server.slice(0,1) + 1) % 10;
-        // });
         updateWithCurrentPhoto();
 
         reloading = false;
@@ -443,7 +431,7 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         // console.log(originalPhotos[currentPhotoI]);
         // console.log("---------&&&&&&&&&------------");
 
-        
+
         dimensions = originalPhotos[currentPhotoI]
             .all_tags.split(",")
             .filter(function (d) { return ignoredDimensions.indexOf(d.split(":")[0])=== -1; });
@@ -472,7 +460,7 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
                 currentDimension = dimensions[dimNameI];
             } else {
                 //I give up :(. Not anymore.
-                
+
                 currentDimension = dimensions[0];
                 console.log("se rinde :( currentDimension queda:")
                 console.log(currentDimension)
@@ -496,7 +484,7 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         if (currentPhotoI!==undefined && originalPhotos[currentPhotoI]) {
             //Why does currentPhotoI become undefined?????
             var currentPhoto = originalPhotos[currentPhotoI];
-            currentDimension = currentPhoto.dimension_name + ":" + btoa(currentPhoto.dimension_value);
+            currentDimension = currentPhoto.dimension_name + ":" + btoa(currentPhoto.dimension_value); // this fails for non ascii chars. see https://stackoverflow.com/questions/23223718/failed-to-execute-btoa-on-window-the-string-to-be-encoded-contains-characte
         }
         updateDimensionsOptions(photos);
         // if (ringNeedsUpdate) {
@@ -506,34 +494,22 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
 
         //Update scales
         var pageSize = (Math.min(w,h)*0.8 - PAGE_GAP );
-
-        // photowidth =  pageSize / NUM_COLS;
         photowidth =  pageSize / Math.max(NUM_ROWS, NUM_COLS) ;
-
         pageScale.range([
             (direction === "vertical" ? h: w) /2 -  (5/2 * pageSize) - (2 * PAGE_GAP) ,
             (direction === "vertical" ? h: w) /2 +  (3/2 * pageSize) + (2 * PAGE_GAP) ] );
-
         xScale.domain([0, NUM_COLS])
             .range(direction === "vertical" ?
                     [(w - pageSize)/2,
                     (w - pageSize)/2 + pageSize] :
                     [ 0, pageSize]
                 );
-            //horizontal
-            // .range([ 0, pageSize]);
         console.log("update photowidth" + photowidth + " pageSize " + pageSize);
-
-
         yScale.domain([0, NUM_ROWS])
             .range(direction === "vertical" ?
                     [0, pageSize] :
                     [(h - pageSize)/2, (h - pageSize)/2 + pageSize]
                 );
-            //horizontal
-            // .range([(h - pageSize)/2,
-            //     (h - pageSize)/2 + pageSize]);
-
         var selPhotos = photosLayer.selectAll(".photo")
             .data(photos, function (d) { return "" + d.photo_id + "|" + d.dimension_name + "|" + d.dimension_value ; });
 
@@ -649,6 +625,8 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         var currentPhotoID=originalPhotos[currentPhotoI].photo_id;
         console.log("previousDimension currentPhotoI = " + currentPhotoI + " changingDimensionCount" + changingDimensionCount);
         ringNeedsUpdate = true;
+        console.log('currentPhotoID: ' + currentPhotoID);
+        console.log('currentDimension: ' + currentDimension);
         reload(currentPhotoID, atob(currentDimension.split(":")[1]), true);
     }
 
@@ -712,6 +690,8 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         updateWithCurrentPhoto();
     }
 
+    /* moves the focus index to the first photo in the next dimension value*/
+    /* in case we are at the last dimension value of a dimesions, it goes arund to the first one*/
     function nextDimensionValue() {
         if (reloading) return;
         reloading = true;
@@ -719,31 +699,31 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         var currentValueI = values.indexOf(originalPhotos[currentPhotoI].dimension_value);
         var nextValueI = currentValueI + 1;
 
-        if (nextValueI > data.dimension_values.length) nextValueI = 0;
+        if (nextValueI >= data.dimension_values.length) nextValueI = 0;
         var newDimensionID = data.dimension_values[nextValueI].min_dimension_id;
         console.log("next dimension_value: " + data.dimension_values[nextValueI].dimension_value);
-        // reloadWithDimensionId(newDimensionID);
         currentDimension = data.dimension_values[nextValueI].dimension_name + ":" + data.dimension_values[nextValueI].dimension_value;
         reloadWithDimensionId(newDimensionID);
-        // reloadWithDimensionValue(data.dimension_values[nextValueI].dimension_value);
     }
 
+    /* moves the focus index to the first photo in the previous dimension value*/
+    /* in case we are at the first dimension value of a dimesions, it goes arund to the last one*/
     function previousDimensionValue() {
+        console.log('$$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ previousDimensionValue $$$$$$$$$$$$$')        
         if (reloading) return;
         reloading = true;
         var values = data.dimension_values.map(function (d) { return d.dimension_value; });
         var currentValueI = values.indexOf(originalPhotos[currentPhotoI].dimension_value);
         var nextValueI = currentValueI - 1;
 
-        if (nextValueI < 0 ) nextValueI =  data.dimension_values.length;
+        if (nextValueI < 0 ) nextValueI =  data.dimension_values.length - 1;
         var newDimensionID = data.dimension_values[nextValueI].min_dimension_id;
         console.log("previous dimension_value: " + data.dimension_values[nextValueI].dimension_value);
         currentDimension = data.dimension_values[nextValueI].dimension_name + ":" + data.dimension_values[nextValueI].dimension_value;
         reloadWithDimensionId(newDimensionID);
-
-        // reloadWithDimensionValue(data.dimension_values[nextValueI].dimension_value);
     }
 
+    /* moves the focus index to the first photo in the selected dimension value d*/
     function jumpToDimensionValue(d) {
         if (reloading) return;
         reloading = true;
@@ -767,11 +747,9 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         var dataToShow = originalPhotos.slice(Math.max(0, currentPhotoI - Math.floor(NUM_COLS * NUM_ROWS * 2.5)),
             currentPhotoI + Math.floor(NUM_COLS * NUM_ROWS * 2.5));
         dataToShow.forEach(function (d, i) {
-            // d.pos = i + (currentPhotoI < 2*NUM_COLS*NUM_ROWS ? currentPhotoI : NUM_COLS*NUM_ROWS*2);
             d.pos = i + (currentPhotoI < 2.5*NUM_COLS*NUM_ROWS ?
                 Math.floor(2.5 * NUM_COLS * NUM_ROWS - currentPhotoI) :
                 0);
-            // d.pos = i + 2*NUM_COLS*NUM_ROWS;
         });
         update(dataToShow);
     }
@@ -818,11 +796,8 @@ var photoRing = '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-
         d3.json(url, callbackPhotos);
     }
 
-    function reloadWithDimensionValue(dimension_value, mRedraw) {
-        return reload(undefined, dimension_value, mRedraw);
-    }
-
     function reloadWithDimensionId(dimension_id, mRedraw) {
+        console.log('$$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ $$$$$$$$$$$ reloadWithDimensionId $$$$$$$$$$$$$')
         reloading = true;
         // console.log("reloadWithDimensionId dimension_id=" + dimension_id );
         var url = "getPhotos?dimension=" + getCurrentDimensionName();

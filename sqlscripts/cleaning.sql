@@ -14,3 +14,15 @@ select substring(Title, 1, 3000) from artworks_substring
 -- max key length. If we need max 4 bytes for every character, then, 768 is the top
 -- as the max character length in moma is 777, not much is lost.
 update artworks_substring set Title = substring(Title, 1, 768);
+
+
+# NOT IMAGE FOUND LINK https://i.imgur.com/eKXz0uk.png
+
+
+UPDATE photoDimension
+  SET ThumbnailURL = '//i.imgur.com/eKXz0uk.png'
+  WHERE ThumbnailURL = 'https://www.moma.org/'
+
+UPDATE photos
+  SET ThumbnailURL = '//i.imgur.com/eKXz0uk.png'
+  WHERE ThumbnailURL = 'https://www.moma.org/'

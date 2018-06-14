@@ -11,6 +11,9 @@ connectionURL= process.env.MYSQL_DATABASE_URL || config.mySQLURL;
 var obj;
 var LIMIT = 500;
 
+/* Given a batch of rows, it finds the relative Index position of the dimension_id in that set of rows*/
+/* It usually returns 250, unless we are at the border of the photoDimension Table, in which case */
+/* it might just return a bigger or an smaller value*/
 function getIndexOfDimensionID (rows, dimension_id) {
   dimension_id = +dimension_id;
   var foundit = false;
@@ -42,6 +45,8 @@ function getIndexOfDimensionID (rows, dimension_id) {
   return -1;
 }
 
+/*For a valid dimension_name, returns the start postions and the length of each section in that dimension.*/
+/*It also returns the results ordered by dimension value*/
 function getDimensionCounts(dimension_name, callback) {
   var result;
   console.log("getDimensionCounts " + dimension_name);
@@ -88,7 +93,7 @@ function returnNextPhotosFromDimensionID(res, dimension_id) {
         return;
       }
       result.photos = rows;
-      dimension_name = rows[0].dimension_name; // rows[0] is undefined sometimes?
+      dimension_name = rows[0].dimension_name; // rows[0] is undefined sometimes? YES border conditions
       getDimensionCounts(dimension_name, function (dimension_values) {
         result.dimension_values = dimension_values;
         res.end(JSON.stringify(result));
@@ -124,6 +129,8 @@ function returnPreviousPhotosFromDimensionID(res, dimension_id) {
   });
 }
 
+/*Return photos given a dimension_id from PhotoDimension*/
+/* The result set has rows, the focus index and dimension_values for the dimension of the focus index image*/
 function returnPhotosFromDimensionID(res, dimension_id) {
   // console.log(dimension_id);
   console.log("returnPhotosFromDimensionID  "  +
@@ -152,7 +159,6 @@ function returnPhotosFromDimensionID(res, dimension_id) {
       console.log("getIndexOfDimensionID dimension_id = " + dimension_id + " center =" + rowI);
       result.center = rowI;
       dimension_name = rows[rowI].dimension_name;
-      result.center = rowI;
       getDimensionCounts(dimension_name, function (dimension_values) {
         result.dimension_values = dimension_values;
         res.end(JSON.stringify(result));
@@ -277,29 +283,32 @@ app.get('/', function (req, res) {
 app.get("/getPhotos", function (req, res) {
   var dimension_name = req.query.dimension;
   var dimension_value = req.query.dimension_value;
-  var dimension_id = req.query.dimension_id || 0;
-  console.log("getNextPhotos " +  " dimension_name:" + dimension_name +
+  var dimension_id = req.query.dimension_id || 0; // no se si debería ser cero dado que el minimo es 69729241....
+  console.log("getPhotos " +  " dimension_name:" + dimension_name +
     " dimension_value:" + dimension_value+
     " dimension_id:" + dimension_id);
   var photo_id;
 
   if (dimension_value!== undefined && req.query.current_photo_id!== undefined) {
     photo_id = req.query.current_photo_id;
+    console.log('ENTRA IF 1 DE GET PHOTOS')
     returnPhotosFromDimensionNameValueAndPhotoID(res, photo_id, dimension_name, dimension_value);
 
   } else if (req.query.current_photo_id !== undefined) {
     photo_id = req.query.current_photo_id;
+    console.log('ENTRA IF 2 DE GET PHOTOS')
     returnPhotosFromDimensionNameAndPhotoID(res, photo_id, dimension_name);
 
   } else if (req.query.dimension!== undefined && req.query.dimension_value!== undefined) {
     dimension_value = req.query.dimension_value;
+    console.log('ENTRA IF 3 DE GET PHOTOS')
     returnPhotosFromDimensionValue(res, dimension_name, dimension_value);
 
   } else {
+    console.log('ENTRA IF 4 DE GET PHOTOS')
     returnPhotosFromDimensionData(res, dimension_name, dimension_id);
   }
 }); //getNextPhotos
-
 
 //Get the photos before the given dimension_id
 app.get("/getPreviousPhotos", function (req, res) {

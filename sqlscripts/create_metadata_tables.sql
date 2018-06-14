@@ -153,14 +153,4 @@ UPDATE photoDimension as pd, photos as p
   SET pd.URL = p.URL, pd.ThumbnailURL = p.ThumbnailURL
   WHERE pd.photo_id = p.photo_id
 
-# NOT IMAGE FOUND LINK https://i.imgur.com/eKXz0uk.png
-
-
-UPDATE photoDimension
-  SET ThumbnailURL = '//i.imgur.com/eKXz0uk.png'
-  WHERE ThumbnailURL = 'https://www.moma.org/'
-
-UPDATE photos
-  SET ThumbnailURL = '//i.imgur.com/eKXz0uk.png'
-  WHERE ThumbnailURL = 'https://www.moma.org/'
 
