@@ -1,10 +1,10 @@
 # PhotoRing
 
-![GitHub Logo](/static/img/photoringLive.png)
+![Photoring live screenshot](/static/img/photoringLive.png)
 
 You can see a live version of this app [here!](http://photoring.herokuapp.com)
 
-PhotoRing is a tool that allows someone visualize and traverse a big repository of images across *all its dimensions* without losing context. 
+PhotoRing is a tool that allows someone visualize and traverse a big repository of images across *all its dimensions*. It offers the user a sense of location within the dataset. A user can change dimensions, jump between sections and zoom in and out in order to see more or less photos. 
 
 
 ## How to run it
@@ -36,30 +36,50 @@ node server.js
 The server should have started listening at http://:::8087 (localhost). If you want to change the listening port of the server, go to the `config.js` configuration file.
 
 
-## Vocabulary
-Let’s define some of the terms in that definition:
+## How to use it
 
-Image: This image has tags and natural dimensions associated with it:
 
-### Natural dimensions: 
 
-Author, Date taken, camera, location, picture properties such as opacity, brightness, etc. This natural dimensions usually apply to most if not all images in the dataset. By "apply" I mean an image has a value associated to that dimension.
+### Video on how to use Photoring 
 
-### Tags: 
+Spanish [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 
-Tags are associated keywords with each image. 
+English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 
-### Context:
 
- Set of variables that completely describe the current position and interaction of the user with the dataset. The exact variables that made up context are not defined yet. 
+### Explanation
 
-### Visualize: 
+<img style="float: left;" src="/docs/msmonroe.png">
 
-Once the user is positioned in a certain place of the dataset (which has a context associated with it), he can see the images at multiple focus levels: 1 picture, 10, 100 pictures. This feature is similar to zoom it/out the photos library on iOS. How much can a user zoom out?
+Images have metadata. For the image at the left, it looks like this:
 
-### Traverse: 
+* Title: Marilyn Monroe, actress, New York
+* Identifier: 275101-28281
+* Date: May 1957
+* Authors: Richard Avendon
+* Nationality: (American, 1923–2004)
+* Camera: Canon-360ks
+* Print: Gelatin silver print, printed 1989,
+7 15/16 x 7 13/16" (20.2 x 19.8 cm)
+* … And many more characteristics.
 
-The user is able to move continuously across the dataset. Also, he can jump between “places”, keeping context between the jumps. This means, a user can go back to the previous place he was in. Can he go back further than that?
+Photoring takes the characteristics of every photo/image in a collection and associates them with a dimension. For the image above, *Title*,  *Date*, *Authors*, *Nationality*, etc, all are going to become dimensions. You can traverse the dataset by any of these dimensions.
+
+![Photoring screenshot with coloured boxes showing the 3 panels: Sections panel, action panels and visualization panel](/docs/photoringLiveBoxes.png)
+
+
+When you open Photoring, it selects a dimension from the metadata of the photos randomly and then brings a batch of photos in the order given by that dimension.
+
+
+In the picture above you can see 3 different colored boxes:
+
+1. Box 1: Dimension sections panel: This panel shows the dimensions sections that the current dimensions has
+
+2. Box 2: Actions panel
+
+3. Box 3. Visualization panel
+
+
 
 
 
