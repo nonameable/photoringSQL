@@ -49,7 +49,7 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 
 ### Explanation
 
-<img style="float: left;" src="/docs/msmonroe.png">
+<img align="left;" width="100" height="100" src="/docs/msmonroe.png">
 
 Images have metadata. For the image at the left, it looks like this:
 
