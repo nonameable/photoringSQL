@@ -5,7 +5,6 @@
   "main": "extract_attribs.js",
   "dependencies": {
     "express": "^4.12.3",
-    "flickrapi": "^0.6.0",
     "mysql": "^2.6.2"
   },
   "devDependencies": {},
