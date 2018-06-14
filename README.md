@@ -49,9 +49,13 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 
 ### Explanation
 
-<img align="left;" width="100" height="100" src="/docs/msmonroe.png">
+<img align="left;" width="400" height="400" src="/docs/msmonroe.png">
 
 Images have metadata. For the image at the left, it looks like this:
+
+```
+<img align="left" width="100" height="100" src="http://www.fillmurray.com/100/100">
+```
 
 * Title: Marilyn Monroe, actress, New York
 * Identifier: 275101-28281
