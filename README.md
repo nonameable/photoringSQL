@@ -54,7 +54,7 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 Images have metadata. For the image at the left, it looks like this:
 
 ```
-<img align="left" width="100" height="100" src="http://www.fillmurray.com/100/100">
+<img align="left;" width="400" height="400" src="/docs/msmonroe.png"0">
 ```
 
 * Title: Marilyn Monroe, actress, New York
@@ -83,14 +83,6 @@ In the picture above you can see 3 different colored boxes:
 
 3. Box 3. Visualization panel
 
-## `left` alignment
-
-<img align="left" width="100" height="100" src="http://www.fillmurray.com/100/100">
-
-This is the code you need to align images to the left:
-```
-<img align="left" width="100" height="100" src="http://www.fillmurray.com/100/100">
-```
 
 
 
