@@ -52,7 +52,6 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 <img align="left;" width="400" height="400" src="/docs/msmonroe.png">
 
 Images have metadata. For the image at the left, it looks like this:
-
 ```
 <img align="left;" width="400" height="400" src="/docs/msmonroe.png">
 ```
