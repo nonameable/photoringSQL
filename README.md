@@ -49,12 +49,9 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 
 ### Explanation
 
-<img align="left;" width="400" height="400" src="/docs/msmonroe.png">
+<img align="center;" width="200" height="200" src="/docs/msmonroe.png">
 
-Images have metadata. For the image at the left, it looks like this:
-```
-<img align="left;" width="400" height="400" src="/docs/msmonroe.png">
-```
+Images have metadata. For the image above, it looks like this:
 
 * Title: Marilyn Monroe, actress, New York
 * Identifier: 275101-28281
@@ -71,16 +68,23 @@ Photoring takes the characteristics of every photo/image in a collection and ass
 ![Photoring screenshot with coloured boxes showing the 3 panels: Sections panel, action panels and visualization panel](/docs/photoringLiveBoxes.png)
 
 
-When you open Photoring, it selects a dimension from the metadata of the photos randomly and then brings a batch of photos in the order given by that dimension.
+When you open Photoring, it selects a dimension from the metadata of the photos randomly and then brings a batch of photos in the order given by that dimension. The batch is centered around a particular photo that appears in the middle of the Photo visualization panel (Box 3). When we say that the user moves through the dataset, we mean the current photo at the center of the visualization changes and therefore, all photos around it. 
 
+In the image above you can see 3 different colored boxes:
 
-In the picture above you can see 3 different colored boxes:
+1. Box 1: Dimension sections panel: This panel shows the dimensions sections that the current dimensions has. A section is a group of photos that share a dimension value. (e.g Hamlet and Macbeth share the dimension value *Shakespeare* in the author dimension)
 
-1. Box 1: Dimension sections panel: This panel shows the dimensions sections that the current dimensions has
+2. Box 2: Actions panel: It has the following sequence of buttons:
+	1. Previous Dimension
+	2. Next Dimension
+	3. Previous Section
+	4. Previous Photo
+	5. Next Photo
+	6. Next Section
+	7. Zoom out
+	8. Zoom in
 
-2. Box 2: Actions panel
-
-3. Box 3. Visualization panel
+3. Box 3. Visualization panel: Panel in which photos/images are showed according to the current zoom level. Photos that belong to the same section have the same background color. As mentioned earlier. Photos are displayed in order, from top to bottom, according to the order associated with the current dimension. A user can also change the current 
 
 
 
