@@ -54,7 +54,7 @@ English [here](https://www.youtube.com/watch?v=PArgtZ5IpsU).
 Images have metadata. For the image at the left, it looks like this:
 
 ```
-<img align="left;" width="400" height="400" src="/docs/msmonroe.png"0">
+<img align="left;" width="400" height="400" src="/docs/msmonroe.png">
 ```
 
 * Title: Marilyn Monroe, actress, New York
