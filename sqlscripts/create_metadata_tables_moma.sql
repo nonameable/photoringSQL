@@ -15,10 +15,10 @@ CREATE TABLE `photoDimension` (
   KEY `photoDimension_index_photo_id` (`photo_id`),
   KEY `photoDimension_photo_id_dim_name` (`dimension_name`,`photo_id`) USING BTREE,
   KEY `photoDimension_dim_name_and_value` (`dimension_name`,`dimension_value`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=69729241 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
--- inserting data from every dimension
-
+-- inserting data from every dimensionin the dataset that you want
+-- TODO: This needs to be automated
 -- Title
 INSERT INTO photoDimension
 (photo_id, dimension_name, dimension_value, name, description, server, secret, URL, ThumbnailURL)
@@ -146,11 +146,3 @@ SELECT * from photoDimension NATURAL JOIN photosAllTags
 ORDER BY dimension_id;
 CREATE INDEX photoDimensionAllTags_photo_id  ON photoDimensionAllTags (photo_id);
 CREATE INDEX photoDimensionAllTags_dimension_id  ON photoDimensionAllTags (dimension_id);
-
-## OTHER SCRIPTS
-
-UPDATE photoDimension as pd, photos as p
-  SET pd.URL = p.URL, pd.ThumbnailURL = p.ThumbnailURL
-  WHERE pd.photo_id = p.photo_id
-
-

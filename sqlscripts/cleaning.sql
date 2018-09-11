@@ -15,7 +15,6 @@ select substring(Title, 1, 3000) from artworks_substring
 -- as the max character length in moma is 777, not much is lost.
 update artworks_substring set Title = substring(Title, 1, 768);
 
-
 # NOT IMAGE FOUND LINK https://i.imgur.com/eKXz0uk.png
 
 
