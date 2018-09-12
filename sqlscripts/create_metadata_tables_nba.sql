@@ -6,9 +6,6 @@ CREATE TABLE `photoDimension` (
   `dimension_value` varchar(738) NOT NULL,
   `dimension_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
-  `description` varchar(50) DEFAULT NULL,
-  `server` varchar(50) DEFAULT NULL,
-  `secret` varchar(50) DEFAULT NULL,
   `URL` varchar(300) DEFAULT NULL,
   `ThumbnailURL` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`dimension_id`),
@@ -20,16 +17,104 @@ CREATE TABLE `photoDimension` (
 -- inserting data from every dimensionin the dataset that you want
 -- TODO: This needs to be automated using config files
 
--- Title
+-- name
 INSERT INTO photoDimension
-(photo_id, dimension_name, dimension_value, name, description, server, secret, URL, ThumbnailURL)
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
 select
-photo_id, "Title" as dimension_name, Title as dimension_value,
-photos.Title, photos.description, photos.server, photos.secret, photos.URL, photos.ThumbnailURL
- from photos
- where Title!="" order by dimension_value;
+photo_id, "name" as dimension_name, name as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where name!="" order by dimension_value;
 
+-- games_played
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "games_played" as dimension_name, games_played as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where games_played!="" order by dimension_value;
 
+-- min
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "min" as dimension_name, min as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where min!="" order by dimension_value;
+
+-- pts
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "pts" as dimension_name, pts as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where pts!="" order by dimension_value;
+
+-- age
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "age" as dimension_name, age as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where age!="" order by dimension_value;
+
+-- birth_place
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "birth_place" as dimension_name, birth_place as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where birth_place!="" order by dimension_value;
+
+-- college
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "college" as dimension_name, college as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where college!="" order by dimension_value;
+
+-- experience
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "experience" as dimension_name, experience as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where experience!="" order by dimension_value;
+
+-- height
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "height" as dimension_name, height as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where height!="" order by dimension_value;
+
+-- team
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "team" as dimension_name, team as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where team!="" order by dimension_value;
+
+-- bmi
+INSERT INTO photoDimension
+(photo_id, dimension_name, dimension_value, name, URL, ThumbnailURL)
+select
+photo_id, "bmi" as dimension_name, bmi as dimension_value,
+photos.name, photos.URL, photos.ThumbnailURL
+from photos
+where bmi!="" order by dimension_value;
 
 # other tables needed for photoring to work
 

@@ -11,7 +11,7 @@ PhotoRing is a tool that allows someone visualize and traverse a big repository 
 
 
 ### Database configuration
-Create an empty mySQL database with the name `photoring`.  In the scripts contained in the `/sqlscripts`directory which you need to run to deploy the project, , the database name is `photoring`. If you named your database differently, you must change the name in the scripts. 
+Create an empty mySQL database with the name `photoring` if you want to use the moma dataset or the name `nba_photoring` if you want the smaller nba dataset. In the scripts contained in the `/sqlscripts`directory which you need to run to deploy the project, , the database name is `photoring`. If you named your database differently, you must change the name in the scripts. 
 
 Run the following scripts in the order below:
 
